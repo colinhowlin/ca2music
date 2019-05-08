@@ -1,5 +1,8 @@
+{% extends 'base.html.twig' %}
 
+{% block title %}Sales Data {% endblock %}
 
+{% block body %}
 
 Viewing all the sales...
 {% for singleRow in all %} 
@@ -9,32 +12,15 @@ Viewing all the sales...
    {{singleRow.totalcost}}
    
    <br>
-{% endfor %} 
+{% endfor %}
 
-
-
-
-
-
-
-
-<!doctype html>
-<html>
-
-<head>
-	<title>Line Chart</title>
-	<script src="https://www.chartjs.org/dist/2.8.0/Chart.min.js"></script>
-	<script src="https://www.chartjs.org/samples/latest/utils.js"></script>
 	<style>
-	canvas{
-		-moz-user-select: none;
-		-webkit-user-select: none;
-		-ms-user-select: none;
-	}
+		canvas{
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
 	</style>
-</head>
-
-<body>
 	<div style="width:75%;">
 		<canvas id="canvas"></canvas>
 	</div>
@@ -160,6 +146,5 @@ Viewing all the sales...
 			window.myLine.update();
 		});
 	</script>
-</body>
 
-</html>
+{% endblock %}

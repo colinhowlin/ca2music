@@ -1,22 +1,22 @@
+{% extends 'base.html.twig' %}
 
+{% block title %}Hello NewsController!{% endblock %}
 
+{% block body %}
 
+    {% if app.request.get('error') is defined %}
+        <h2>{{ app.request.get('error') }}</h2>
+    {% endif %}
 
+    Login page
+    <p>
 
-{% if app.request.get('error') is defined %}
-    <h2>{{ app.request.get('error') }}</h2>
-{% endif %}
+    <form action="validatelogin" method="post">
+    Username <input type="text" name="username"> <br>
+    Username <input type="password" name="password"> <br>
+    <input type="submit"/>
 
+    </form>
 
-
-Login page
-<p>
-
-<form action="validatelogin" method="post">
-Username <input type="text" name="username"> <br>
-Username <input type="password" name="password"> <br>
-<input type="submit"/>
-
-
-</form>
+{% endblock %}
 
