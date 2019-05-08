@@ -4,12 +4,50 @@
 
 {% block body %}
 
+    <!-- API KEY: ed472a3f45a940b08edcff61c355f898 -->
 
-
-    <div class="jumbotron">
+    <div>
 
         <h1>News Section</h1>
+        <hr>
 
     </div>
+
+    <style>
+        .preview-image{width:200px;}
+    </style>
+
+    <div id="articles">
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+    <script>
+        var url = 'https://newsapi.org/v2/everything?' +
+            'q=Music&' +
+            'from=2019-05-08&' +
+            'sortBy=popularity&' +
+            'apiKey=ed472a3f45a940b08edcff61c355f898';
+
+        var req = new Request(url);
+
+        $.getJSON(url, function(data) {
+            console.log(data);
+            console.log(data['articles'][0])
+
+            $.each(data['articles'], function (key, val) {
+                $("#articles").append(
+                    "<img class=preview-image src=" + val['urlToImage'] + "alt=image>" +
+                    "<h4>" + val['title'] + "</h4>" +
+                    "<p>" + val['description'] + "<a href=" + val['url'] + ">...Read more...</a></p>" +
+                    "<hr>"
+                );
+            });
+        });
+
+    </script>
 
 {% endblock %}
