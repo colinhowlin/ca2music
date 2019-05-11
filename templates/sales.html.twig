@@ -5,8 +5,7 @@
 {% block body %}
 
 Viewing all the sales...
-{% for singleRow in all %} 
-
+{% for singleRow in all %}
 
    {{singleRow.item}}         
    {{singleRow.totalcost}}
@@ -22,42 +21,67 @@ Viewing all the sales...
 		}
 	</style>
 	<div style="width:75%;">
-		<canvas id="canvas"></canvas>
+		<canvas id="lineChart"></canvas>
+		<canvas id="horizontalBarChart"></canvas>
+		<canvas id="doughnutChart"></canvas>
+		<canvas id="sBarChart"></canvas>
 	</div>
 	<br>
 	<br>
 	
 	<script>
-		var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-		var config = {
+		var cdSales = 0;
+		var dvdSales = 0;
+		var cdSalesArray = [];
+		var dvdSalesArray = [];
+
+		{% for row in all %}
+			if ('{{ row.item }}' === 'cd'){
+				cdSales += {{ row.totalCost }}
+				cdSalesArray.push({{ row.totalCost }})
+			} else if ('{{ row.item }}' === 'dvd'){
+				dvdSales += {{ row.totalCost }}
+				dvdSalesArray.push({{ row.totalCost }})
+			}
+		{% endfor %}
+
+		var donutData = {
+			labels: ['CD', 'DVD'],
+			datasets: [{
+				label: 'Sales',
+				backgroundColor: [
+					window.chartColors.orange,
+					window.chartColors.blue
+				],
+				data: [
+					cdSales,
+					dvdSales
+				]
+			}],
+		};
+
+		var data = {
+			labels: [
+				{% for singleRow in all %}
+				'{{singleRow.item}}',
+				{% endfor %}
+			],
+			datasets: [{
+				label: 'Sales',
+				backgroundColor: window.chartColors.red,
+				borderColor: window.chartColors.red,
+				data: [
+					{% for singleRow in all %}
+					{{singleRow.totalcost}},
+					{% endfor %}
+				],
+				fill: false,
+			}]
+		};
+
+		var lineChartConfig = {
+			data: data,
 			type: 'line',
-			data: {
-				labels: [
-                
-                {% for singleRow in all %} 
-                    '{{singleRow.item}}',         
-                {% endfor %} 
-
-
-                
-                ],
-				datasets: [{
-					label: 'Sales',
-					backgroundColor: window.chartColors.red,
-					borderColor: window.chartColors.red,
-					data: [
-						
-                    {% for singleRow in all %} 
-
-                         
-                       {{singleRow.totalcost}},
-                       
-                      
-                    {% endfor %} 
-					],
-					fill: false,
-				}]
-			},
 			options: {
 				responsive: true,
 				title: {
@@ -77,74 +101,100 @@ Viewing all the sales...
 						display: true,
 						scaleLabel: {
 							display: true,
-							labelString: 'Month'
+							labelString: 'Sale type'
 						}
 					}],
 					yAxes: [{
 						display: true,
 						scaleLabel: {
 							display: true,
-							labelString: 'Value'
+							labelString: 'sales'
 						}
 					}]
 				}
 			}
 		};
 
-		window.onload = function() {
-			var ctx = document.getElementById('canvas').getContext('2d');
-			window.myLine = new Chart(ctx, config);
+		var hBarConfig = {
+			type: 'horizontalBar',
+			data: data,
+			options: {
+				elements: {
+					rectangle: {
+						borderWidth: 2,
+					}
+				},
+				responsive: true,
+				legend: {
+					position: 'right',
+				},
+				title: {
+					display: true,
+					text: 'Chart.js Horizontal Bar Chart'
+				}
+			}
 		};
 
-
-
-		var colorNames = Object.keys(window.chartColors);
-		document.getElementById('addDataset').addEventListener('click', function() {
-			var colorName = colorNames[config.data.datasets.length % colorNames.length];
-			var newColor = window.chartColors[colorName];
-			var newDataset = {
-				label: 'Dataset ' + config.data.datasets.length,
-				backgroundColor: newColor,
-				borderColor: newColor,
-				data: [],
-				fill: false
-			};
-
-			for (var index = 0; index < config.data.labels.length; ++index) {
-				newDataset.data.push(randomScalingFactor());
+		var donutChartConfig = {
+			type: 'doughnut',
+			data: donutData,
+			options: {
+				responsive: true,
+				legend: {
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'Chart.js Doughnut Chart'
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				},
+				circumference: Math.PI,
+				rotation: -Math.PI
 			}
+		};
 
-			config.data.datasets.push(newDataset);
-			window.myLine.update();
-		});
+		var barChartData = {
+			labels: [
+				{% for singleRow in all %}
+				'{{singleRow.item}}',
+				{% endfor %}
+			],
+			datasets: [{
+				label: 'CDs',
+				backgroundColor: window.chartColors.orange,
+				data: cdSalesArray
+			},
+				{
+				label: 'Dvds',
+				backgroundColor: window.chartColors.blue,
+				data: dvdSalesArray
+			}]
+		};
 
-		document.getElementById('addData').addEventListener('click', function() {
-			if (config.data.datasets.length > 0) {
-				var month = MONTHS[config.data.labels.length % MONTHS.length];
-				config.data.labels.push(month);
-
-				config.data.datasets.forEach(function(dataset) {
-					dataset.data.push(randomScalingFactor());
-				});
-
-				window.myLine.update();
+		var sBarChartConfig = {
+			type: 'bar',
+			data: barChartData,
+			options: {
+				title: {
+					display: true,
+					text: 'Chart.js StackedBar Chart'
+				}
 			}
-		});
+		};
 
-		document.getElementById('removeDataset').addEventListener('click', function() {
-			config.data.datasets.splice(0, 1);
-			window.myLine.update();
-		});
-
-		document.getElementById('removeData').addEventListener('click', function() {
-			config.data.labels.splice(-1, 1); // remove the label first
-
-			config.data.datasets.forEach(function(dataset) {
-				dataset.data.pop();
-			});
-
-			window.myLine.update();
-		});
+		window.onload = function() {
+			var ctx = document.getElementById('lineChart').getContext('2d');
+			var ctx2 = document.getElementById('horizontalBarChart').getContext('2d');
+			var ctx3 = document.getElementById('doughnutChart').getContext('2d');
+			var ctx4 = document.getElementById('sBarChart').getContext('2d');
+			window.lineChart = new Chart(ctx, lineChartConfig);
+			window.hBarChart = new Chart(ctx2, hBarConfig);
+			window.doughnutChart = new Chart(ctx3, donutChartConfig);
+			window.sBarChart = new Chart(ctx4, sBarChartConfig);
+		};
 	</script>
 
 {% endblock %}
