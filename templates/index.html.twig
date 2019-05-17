@@ -4,6 +4,13 @@
 
 {% block body %}
 
+        <br>
+        <br>
+
+        {% if app.request.get('error') is defined %}
+                <h2 class="warning">{{ app.request.get('error') }}</h2>
+        {% endif %}
+
         Welcome to the music store!
         <p>
 
