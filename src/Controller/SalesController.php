@@ -20,6 +20,7 @@ class SalesController extends AbstractController
          // check to see if the user should actually be here.
          
          // checking the "auth" variable in the session.
+//<<<<<<< Updated upstream
 
         if ($session->get('auth') == '1') {
             // Get all sales records
@@ -32,5 +33,18 @@ class SalesController extends AbstractController
         } else {
             return $this->redirectToRoute('index', ['error'=> 'You are not authorised to view that page']);
         }
+//=======
+         
+         
+         
+        // Get all sales records
+       $repo = $this->getDoctrine()
+        ->getRepository(Sales::class); // the type of the entity
+        
+        $allRecords = $repo->findAll();
+        
+        
+        return $this->render('sales.html.twig', array("all" => $allRecords) );
+//>>>>>>> Stashed changes
     }
 }

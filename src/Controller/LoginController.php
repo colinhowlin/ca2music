@@ -48,6 +48,8 @@ class LoginController extends AbstractController
             'password' => $password,
         ]);
 
+
+
         if ($person) { // if we find the record, then we can redirect them to the homepage
             $session->set('username', $username);
             $session->set('auth', '1'); // 1 is basically true, 0 is false.
